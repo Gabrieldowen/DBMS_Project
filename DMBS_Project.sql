@@ -1,4 +1,5 @@
 -- Drop before creating
+DROP TABLE IF EXISTS AssemblyXREF;
 DROP TABLE IF EXISTS JobFit;
 DROP TABLE IF EXISTS JobPaint;
 DROP TABLE IF EXISTS JobCut;
@@ -49,27 +50,6 @@ CREATE TABLE ProcessType(
 -- Insert the types
 INSERT INTO ProcessType(ProcessTypeID, ProcessType)
 VALUES (1, 'Fit'), (2, 'Cut'), (3, 'Paint')
-/*
--- Create ProcessFit Table
-CREATE TABLE ProcessFit (
-    ProcessID INT PRIMARY KEY,
-    FitType VARCHAR(255)
-);
-
--- Create ProcessPaint Table
-CREATE TABLE ProcessPaint (
-    ProcessID INT PRIMARY KEY,
-    PaintType VARCHAR(255),
-    PaintMethod VARCHAR(255)
-);
-
--- Create ProcessCut Table
-CREATE TABLE ProcessCut (
-    ProcessID INT PRIMARY KEY,
-    CuttingType VARCHAR(255),
-    CuttingMachine VARCHAR(255)
-);
-*/
 
 CREATE TABLE ProcessInfo (
     ProcessInfoID INT PRIMARY KEY,
@@ -79,15 +59,25 @@ CREATE TABLE ProcessInfo (
 -- Create Process Table
 CREATE TABLE Process (
     ProcessID INT PRIMARY KEY,
+    AssemblyID INT,
     ProcessData VARCHAR(255),
     ProcessInfoID INT,
     ProcessTypeID INT, 
     DepartmentNumber INT,
+    FOREIGN KEY (AssemblyID) REFERENCES [Assembly](AssemblyID),
     FOREIGN KEY (DepartmentNumber) REFERENCES Department(DepartmentNumber),
     FOREIGN KEY (ProcessTypeID) REFERENCES ProcessType(ProcessTypeID),
     FOREIGN KEY (ProcessInfoID) REFERENCES ProcessInfo(ProcessInfoID) ON DELETE CASCADE, 
 );
 
+CREATE TABLE AssemblyXREF (
+    ProcessID INT,
+    AssemblyID INT,
+    PRIMARY KEY (ProcessID, AssemblyID),
+    FOREIGN KEY (ProcessID) REFERENCES Process(ProcessID),
+    FOREIGN KEY (AssemblyID) REFERENCES Assembly(AssemblyID)
+
+);
 
 
 -- Create Job Table
