@@ -1,14 +1,14 @@
--- Drop tables in reverse order to avoid foreign key constraints
--- Drop tables in reverse order to avoid foreign key constraints
+-- Drop before creating
 DROP TABLE IF EXISTS JobFit;
 DROP TABLE IF EXISTS JobPaint;
 DROP TABLE IF EXISTS JobCut;
 DROP TABLE IF EXISTS Job;
+DROP TABLE IF EXISTS Process;
 DROP TABLE IF EXISTS ProcessFit;
 DROP TABLE IF EXISTS ProcessPaint;
 DROP TABLE IF EXISTS ProcessCut;
-DROP TABLE IF EXISTS Process;
 DROP TABLE IF EXISTS ProcessType;
+DROP TABLE IF EXISTS ProcessInfo;
 DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS Assembly;
 DROP TABLE IF EXISTS Customer;
@@ -48,8 +48,8 @@ CREATE TABLE ProcessType(
 
 -- Insert the types
 INSERT INTO ProcessType(ProcessTypeID, ProcessType)
-VALUES (1, 'Fit'), (2, 'cut'), (3, 'Paint')
-
+VALUES (1, 'Fit'), (2, 'Cut'), (3, 'Paint')
+/*
 -- Create ProcessFit Table
 CREATE TABLE ProcessFit (
     ProcessID INT PRIMARY KEY,
@@ -69,18 +69,23 @@ CREATE TABLE ProcessCut (
     CuttingType VARCHAR(255),
     CuttingMachine VARCHAR(255)
 );
+*/
 
+CREATE TABLE ProcessInfo (
+    ProcessInfoID INT PRIMARY KEY,
+    Attr1 VARCHAR(255),
+    Attr2 VARCHAR(255)
+);
 -- Create Process Table
 CREATE TABLE Process (
     ProcessID INT PRIMARY KEY,
     ProcessData VARCHAR(255),
+    ProcessInfoID INT,
     ProcessTypeID INT, 
     DepartmentNumber INT,
     FOREIGN KEY (DepartmentNumber) REFERENCES Department(DepartmentNumber),
     FOREIGN KEY (ProcessTypeID) REFERENCES ProcessType(ProcessTypeID),
-    FOREIGN KEY (ProcessID) REFERENCES ProcessFit(ProcessID) ON DELETE CASCADE, 
-    FOREIGN KEY (ProcessID) REFERENCES ProcessCut(ProcessID) ON DELETE CASCADE,
-    FOREIGN KEY (ProcessID) REFERENCES ProcessPaint(ProcessID) ON DELETE CASCADE
+    FOREIGN KEY (ProcessInfoID) REFERENCES ProcessInfo(ProcessInfoID) ON DELETE CASCADE, 
 );
 
 
