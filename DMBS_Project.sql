@@ -17,7 +17,24 @@ DROP TABLE IF EXISTS Account;
 DROP TABLE IF EXISTS AccountType;
 DROP TABLE IF EXISTS CostTransaction;
 
+-- Create AccountType Table
+CREATE TABLE AccountType (
+    AccountTypeID INT PRIMARY KEY,
+    AccountTypeName VARCHAR(255)
+);
 
+-- Insert the types
+INSERT INTO AccountType(AccountTypeID, AccountTypeName)
+VALUES (1, 'Assembly'), (2, 'Department'), (3, 'Process')
+
+-- Create Account Table
+CREATE TABLE Account (
+    AccountNumber INT PRIMARY KEY,
+    DateCreated DATE,
+    Category VARCHAR(255),
+    AccountTypeID INT,
+    FOREIGN KEY (AccountTypeID) REFERENCES AccountType(AccountTypeID)
+);
 
 -- Create Customer Table
 CREATE TABLE Customer (
@@ -64,10 +81,12 @@ CREATE TABLE Process (
     ProcessInfoID INT,
     ProcessTypeID INT, 
     DepartmentNumber INT,
+    AccountNumber INT, 
     FOREIGN KEY (AssemblyID) REFERENCES [Assembly](AssemblyID),
     FOREIGN KEY (DepartmentNumber) REFERENCES Department(DepartmentNumber),
     FOREIGN KEY (ProcessTypeID) REFERENCES ProcessType(ProcessTypeID),
-    FOREIGN KEY (ProcessInfoID) REFERENCES ProcessInfo(ProcessInfoID) ON DELETE CASCADE, 
+    FOREIGN KEY (ProcessInfoID) REFERENCES ProcessInfo(ProcessInfoID),
+    FOREIGN KEY (AccountNumber) REFERENCES Account(AccountNumber)
 );
 
 CREATE TABLE AssemblyXREF (
@@ -122,18 +141,6 @@ CREATE TABLE CostTransaction (
     SupCost FLOAT
 );
 
--- Create AccountType Table
-CREATE TABLE AccountType (
-    AccountTypeID INT PRIMARY KEY,
-    AccountTypeName VARCHAR(255)
-);
 
--- Create Account Table
-CREATE TABLE Account (
-    AccountNumber INT PRIMARY KEY,
-    DateCreated DATE,
-    Category VARCHAR(255),
-    AccountTypeID INT,
-    FOREIGN KEY (AccountTypeID) REFERENCES AccountType(AccountTypeID)
-);
+
 

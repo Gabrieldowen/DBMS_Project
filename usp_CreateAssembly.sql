@@ -1,7 +1,7 @@
 -- usp_InsertCustomer 'Gabe', 'Norman', '1'
 -- usp_CreateNewDepartment 1, 'Datatatatatatatta'
--- usp_CreateProcess 1, 1, 1, 1, 'THE FIT'
--- usp_CreateAssembly 1,  '2023-11-12', 'Details', 'Gabe', 1
+-- usp_CreateProcess 2, 1, 1, 2, 'Another type'
+-- usp_CreateAssembly 1,  '2023-11-12', 'Details', 'Gabe', 2
 ALTER PROCEDURE usp_CreateAssembly
 (
     @AssemblyID         INT,
