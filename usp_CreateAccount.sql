@@ -11,91 +11,88 @@ EXEC usp_CreateNewDepartment 1, 'Datatatatatatatta'
 EXEC usp_CreateProcess 3, 1, 1, 2, 'Another type'
 EXEC usp_CreateAssembly 2,  '2023-11-12', 'Details', 'Gabe', 3
 
--- Associate with a assembly
-EXEC [dbo].[usp_CreateAccount] 1, 2, '2023-11-12', 1, 1
+-- creates fit job
+EXEC [dbo].[usp_CreateJob] 1, 2, 3, 1 , '2023-11-12', 0.69
 
--- Associate with a department
-EXEC [dbo].[usp_CreateAccount] 1, 3, '2023-11-12', 1, 2
+-- creates paint job
+EXEC [dbo].[usp_CreateJob] 2, 2, 3, 2, '2023-11-12', 0.69, 'BLUE', 100
 
--- Associate with a process
-EXEC [dbo].[usp_CreateAccount] 1, 3, '2023-11-12', 1, 3
+-- creates cut job
+EXEC [dbo].[usp_CreateJob] 3, 2, 3, 3, '2023-11-12', 0.69, null, null, 'CUTTER2000', 12, 'Titanium'
 */
 -- 
 -- 
-ALTER PROCEDURE [dbo].[usp_CreateAccount]
+ALTER PROCEDURE [dbo].[usp_CreateJob]
 (
-    @AccountNumber      INT,
-    @AssociationID      INT,
-    @DateCreated        DATE,
-    @Category           VARCHAR(255),
-    @AccountTypeID      INT 
+    @JobID              INT,
+    @AssemblyID         INT,
+    @ProcessID          INT,
+    @JobTypeID          INT,
+    @JobDateStart       DATE,
+    @LaborTime          FLOAT,
+    @Color              VARCHAR(255) = NULL,
+    @Volume             FLOAT = NULL,
+    @MachineType        VARCHAR(255)= NULL, 
+    @MachineTime        FLOAT = NULL, 
+    @Material           VARCHAR(255) = NULL
 )
 
 AS
 BEGIN
-    IF EXISTS (
-        SELECT 1 FROM AccountType
-        WHERE @AccountTypeID = AccountTypeID
-    ) 
+    IF NOT EXISTS (SELECT 1 FROM Job WHERE JobID = @JobID)
     BEGIN
-        IF( @AccountTypeID = 1)    -- Assembly Account type
+        IF EXISTS (SELECT 1 FROM Process WHERE ProcessID  = @ProcessID )
         BEGIN
-            IF NOT EXISTS (SELECT 1 FROM Account WHERE AccountNumber = @AccountNumber)
+            IF EXISTS (SELECT 1 FROM [Assembly] WHERE AssemblyID = @AssemblyID )
             BEGIN
-                INSERT INTO Account(AccountNumber, DateCreated, Category, AccountTypeID)
-                VALUES (@AccountNumber, @DateCreated, @Category, @AccountTypeID)
-
-                UPDATE [dbo].[Assembly]
-                SET AccountNumber = @AccountNumber
-                WHERE [AssemblyID] = @AssociationID
-
-
+                    INSERT INTO Job(JobID, AssemblyID, ProcessID, JobDateStart, JobTypeID)
+                    VALUES (@JobID, @AssemblyID, @ProcessID, @JobDateStart, @JobTypeID)
+                    PRINT 'INSERTED JOB'
+                    IF(@JobTypeID = 1)
+                    BEGIN
+                        PRINT 'Inserting job fit type'
+                        INSERT INTO JobFit(JobID, LaborTime)
+                        VALUES (@JobID, @LaborTime)
+                    END
+                    IF(@JobTypeID = 2)
+                    BEGIN
+                        PRINT 'Inserting job paint type'
+                        INSERT INTO JobPaint(JobID, LaborTime, Color, Volume)
+                        VALUES (@JobID, @LaborTime, @Color, @Volume)
+                    END
+                    IF(@JobTypeID = 3)
+                    BEGIN
+                        PRINT 'Inserting job cut type'
+                        INSERT INTO JobCut(JobID, LaborTime, MachineType, MachineTime, Material)
+                        VALUES (@JobID, @LaborTime, @MachineType, @MachineTime, @Material)
+                    END
             END
             ELSE
-            BEGIN
-                UPDATE [dbo].[Assembly]
-                SET AccountNumber = @AccountNumber
-                WHERE [AssemblyID] = @AssociationID
-            END
+            PRINT 'Assembly Doesnt Exist'
         END
-        IF( @AccountTypeID = 2) -- Department
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM Account WHERE AccountNumber = @AccountNumber)
-            BEGIN
-                INSERT INTO Account(AccountNumber, DateCreated, Category, AccountTypeID)
-                VALUES (@AccountNumber, @DateCreated, @Category, @AccountTypeID)
-
-                UPDATE Department
-                SET AccountNumber = @AccountNumber
-                WHERE DepartmentNumber = @AssociationID
-
-
-            END
-            BEGIN
-                UPDATE Department
-                SET AccountNumber = @AccountNumber
-                WHERE DepartmentNumber = @AssociationID
-
-            END
-        END
-        IF( @AccountTypeID = 3) -- Process
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM Account WHERE AccountNumber = @AccountNumber)
-            BEGIN
-                INSERT INTO Account(AccountNumber, DateCreated, Category, AccountTypeID)
-                VALUES (@AccountNumber, @DateCreated, @Category, @AccountTypeID)
-
-                UPDATE Process
-                SET AccountNumber = @AccountNumber
-                WHERE ProcessID = @AssociationID
-
-            END
-            BEGIN
-                UPDATE Process
-                SET AccountNumber = @AccountNumber
-                WHERE ProcessID = @AssociationID
-            END
-        END
+        ELSE
+            PRINT 'Process Doesnt Exist'
     END
+
+    ELSE
+    BEGIN
+        IF EXISTS (SELECT 1 FROM Process WHERE @ProcessID = ProcessID)
+        BEGIN
+            IF EXISTS (SELECT 1 FROM [Assembly] WHERE @AssemblyID = AssemblyID)
+            BEGIN
+                    UPDATE [dbo].[Job]
+                    SET JobID = @JobID,
+                        AssemblyID = @AssemblyID,
+                        ProcessID = @ProcessID,
+                        JobDateStart = @JobDateStart
+                    WHERE [JobID] = @JobID
+            END
+            ELSE
+            PRINT 'Assembly Doesnt Exist'
+        END
+        ELSE
+            PRINT 'Process Doesnt Exist'
+        END
+    
 END;
 GO

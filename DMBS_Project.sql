@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS JobFit;
 DROP TABLE IF EXISTS JobPaint;
 DROP TABLE IF EXISTS JobCut;
 DROP TABLE IF EXISTS Job;
+DROP TABLE IF EXISTS JobType;
 DROP TABLE IF EXISTS Process;
 DROP TABLE IF EXISTS ProcessFit;
 DROP TABLE IF EXISTS ProcessPaint;
@@ -103,40 +104,56 @@ CREATE TABLE AssemblyXREF (
 );
 
 
+CREATE TABLE JobType(
+    JobTypeID   INT PRIMARY KEY,
+    JobTypeName VARCHAR(50)
+
+)
+-- Insert the types
+INSERT INTO JobType(JobTypeID, JobTypeName)
+VALUES (1, 'Fit'), (2, 'Paint'), (3, 'Cut')
+
 -- Create Job Table
 CREATE TABLE Job (
     JobID INT PRIMARY KEY,
     JobDateStart DATE,
     JobDateEnd DATE,
-    JobTypeID INT
+    JobTypeID INT,
+    ProcessID INT,
+    AssemblyID INT,
+    FOREIGN KEY (ProcessID) REFERENCES Process(ProcessID),
+    FOREIGN KEY (AssemblyID) REFERENCES Assembly(AssemblyID),
+    CONSTRAINT fkJobType FOREIGN KEY (JobTypeID) REFERENCES JobType(JobTypeID)
 );
+
 
 -- Create JobFit Table
 CREATE TABLE JobFit (
-    JobTypeID INT,
+    JobID INT PRIMARY KEY,
     LaborTime FLOAT,
-    JobID INT,
-    FOREIGN KEY (JobID) REFERENCES Job(JobID)
+    CONSTRAINT fkFitJob FOREIGN KEY (JobID) REFERENCES Job(JobID)
 );
 
 -- Create JobPaint Table
 CREATE TABLE JobPaint (
-    JobTypeID INT,
+    JobID INT PRIMARY KEY,
     Color VARCHAR(255),
     Volume FLOAT,
     LaborTime FLOAT,
-    JobID INT,
-    FOREIGN KEY (JobID) REFERENCES Job(JobID)
+   
+    --FOREIGN KEY (JobID) REFERENCES Job(JobID)
+    CONSTRAINT fkPaintJob FOREIGN KEY (JobID) REFERENCES Job(JobID)
 );
 
 -- Create JobCut Table
 CREATE TABLE JobCut (
-    JobTypeID INT,
+    JobID INT PRIMARY KEY,
     MachineType VARCHAR(255),
     Material VARCHAR(255),
+    MachineTime FLOAT,
     LaborTime FLOAT,
-    JobID INT,
-    FOREIGN KEY (JobID) REFERENCES Job(JobID)
+    --FOREIGN KEY (JobID) REFERENCES Job(JobID)
+    CONSTRAINT fkCutJob FOREIGN KEY (JobID) REFERENCES Job(JobID)
 );
 
 -- Create Transaction Table
