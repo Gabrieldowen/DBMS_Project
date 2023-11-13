@@ -1,22 +1,20 @@
 -- Drop before creating
-DROP TABLE IF EXISTS AssemblyXREF;
-DROP TABLE IF EXISTS JobFit;
-DROP TABLE IF EXISTS JobPaint;
+DROP TABLE IF EXISTS CostTransaction;
 DROP TABLE IF EXISTS JobCut;
+DROP TABLE IF EXISTS JobPaint;
+DROP TABLE IF EXISTS JobFit;
 DROP TABLE IF EXISTS Job;
 DROP TABLE IF EXISTS JobType;
+DROP TABLE IF EXISTS AssemblyXREF;
 DROP TABLE IF EXISTS Process;
-DROP TABLE IF EXISTS ProcessFit;
-DROP TABLE IF EXISTS ProcessPaint;
-DROP TABLE IF EXISTS ProcessCut;
-DROP TABLE IF EXISTS ProcessType;
 DROP TABLE IF EXISTS ProcessInfo;
+DROP TABLE IF EXISTS ProcessType;
 DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS Assembly;
 DROP TABLE IF EXISTS Customer;
 DROP TABLE IF EXISTS Account;
 DROP TABLE IF EXISTS AccountType;
-DROP TABLE IF EXISTS CostTransaction;
+DROP TABLE IF EXISTS JobType;
 
 -- Create AccountType Table
 CREATE TABLE AccountType (
@@ -32,7 +30,7 @@ VALUES (1, 'Assembly'), (2, 'Department'), (3, 'Process')
 CREATE TABLE Account (
     AccountNumber INT PRIMARY KEY,
     DateCreated DATE,
-    Category VARCHAR(255),
+    Details FLOAT,
     AccountTypeID INT,
     FOREIGN KEY (AccountTypeID) REFERENCES AccountType(AccountTypeID)
 );
@@ -159,7 +157,12 @@ CREATE TABLE JobCut (
 -- Create Transaction Table
 CREATE TABLE CostTransaction (
     TransactionNumber INT PRIMARY KEY,
-    SupCost FLOAT
+    SupCost FLOAT,
+    JobID INT,
+    ProcessAccountID    INT,
+    DepartmentAccountID    INT,
+    AssemblyAccountID    INT,
+    FOREIGN KEY (JobID) REFERENCES Job(JobID)
 );
 
 
