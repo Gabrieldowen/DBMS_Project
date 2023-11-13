@@ -49,13 +49,17 @@ CREATE TABLE Assembly (
     DateOrdered DATE,
     AssemblyDetails VARCHAR(255),
     CustomerName VARCHAR(255),
-    FOREIGN KEY (CustomerName) REFERENCES Customer(CustomerName)
+    AccountNumber INT,
+    FOREIGN KEY (CustomerName) REFERENCES Customer(CustomerName),
+    FOREIGN KEY (AccountNumber) REFERENCES Account(AccountNumber)
 );
 
 -- Create Department Table
 CREATE TABLE Department (
     DepartmentNumber INT PRIMARY KEY,
-    DepartmentData VARCHAR(255)
+    DepartmentData VARCHAR(255),
+    AccountNumber INT,
+    FOREIGN KEY (AccountNumber) REFERENCES Account(AccountNumber)
 );
 
 
