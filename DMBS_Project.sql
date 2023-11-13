@@ -119,6 +119,7 @@ CREATE TABLE Job (
     JobTypeID INT,
     ProcessID INT,
     AssemblyID INT,
+    LaborTime FLOAT,
     FOREIGN KEY (ProcessID) REFERENCES Process(ProcessID),
     FOREIGN KEY (AssemblyID) REFERENCES Assembly(AssemblyID),
     CONSTRAINT fkJobType FOREIGN KEY (JobTypeID) REFERENCES JobType(JobTypeID)
@@ -128,7 +129,6 @@ CREATE TABLE Job (
 -- Create JobFit Table
 CREATE TABLE JobFit (
     JobID INT PRIMARY KEY,
-    LaborTime FLOAT,
     CONSTRAINT fkFitJob FOREIGN KEY (JobID) REFERENCES Job(JobID)
 );
 
@@ -137,7 +137,6 @@ CREATE TABLE JobPaint (
     JobID INT PRIMARY KEY,
     Color VARCHAR(255),
     Volume FLOAT,
-    LaborTime FLOAT,
    
     --FOREIGN KEY (JobID) REFERENCES Job(JobID)
     CONSTRAINT fkPaintJob FOREIGN KEY (JobID) REFERENCES Job(JobID)
@@ -149,7 +148,6 @@ CREATE TABLE JobCut (
     MachineType VARCHAR(255),
     Material VARCHAR(255),
     MachineTime FLOAT,
-    LaborTime FLOAT,
     --FOREIGN KEY (JobID) REFERENCES Job(JobID)
     CONSTRAINT fkCutJob FOREIGN KEY (JobID) REFERENCES Job(JobID)
 );

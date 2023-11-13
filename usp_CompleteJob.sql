@@ -5,6 +5,12 @@ GO
 -- Create a stored procedure to insert a new process with type information
 /*
 
+
+EXEC usp_InsertCustomer 'Gabe', 'Norman', '1'
+EXEC usp_CreateNewDepartment 1, 'Datatatatatatatta'
+EXEC usp_CreateProcess 3, 1, 1, 2, 'Another type'
+EXEC usp_CreateAssembly 2,  '2023-11-12', 'Details', 'Gabe', 3
+
 -- creates fit job
 EXEC [dbo].[usp_CompleteJob] 1, 1 , '2023-11-12', 0.69
 
@@ -36,26 +42,27 @@ BEGIN
             UPDATE Job
             SET JobID = @JobID, 
                 JobDateEnd = @JobDateEnd,
-                JobTypeID = @JobTypeID
+                JobTypeID = @JobTypeID,
+                LaborTime = @LaborTime
             WHERE JobID = @JobID
             PRINT 'UPDATE JOB'
             IF(@JobTypeID = 1)
             BEGIN
                 PRINT 'Inserting job fit type'
-                INSERT INTO JobFit(JobID, LaborTime)
-                VALUES (@JobID, @LaborTime)
+                INSERT INTO JobFit(JobID)
+                VALUES (@JobID)
             END
             IF(@JobTypeID = 2)
             BEGIN
                 PRINT 'Inserting job paint type'
-                INSERT INTO JobPaint(JobID, LaborTime, Color, Volume)
-                VALUES (@JobID, @LaborTime, @Color, @Volume)
+                INSERT INTO JobPaint(JobID, Color, Volume)
+                VALUES (@JobID, @Color, @Volume)
             END
             IF(@JobTypeID = 3)
             BEGIN
                 PRINT 'Inserting job cut type'
-                INSERT INTO JobCut(JobID, LaborTime, MachineType, MachineTime, Material)
-                VALUES (@JobID, @LaborTime, @MachineType, @MachineTime, @Material)
+                INSERT INTO JobCut(JobID, MachineType, MachineTime, Material)
+                VALUES (@JobID, @MachineType, @MachineTime, @Material)
             END
     END
     ELSE
